@@ -11,6 +11,8 @@ app.use(express.json());
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 const documentRoutes = require("./routes/documents");
+const queryRoutes = require("./routes/query");
+app.use("/api/query", queryRoutes);
 app.use("/api/documents", documentRoutes);
 app.get("/api/health", async (req, res) => {
   res.json({
