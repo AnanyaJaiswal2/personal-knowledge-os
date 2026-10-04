@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
-
+import Layout from "../components/Layout";
 function Dashboard() {
   const [documents, setDocuments] = useState([]);
   const [mode, setMode] = useState("text"); // "text" | "url" | "pdf"
@@ -61,29 +61,13 @@ function Dashboard() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
 
-  return (
-    <div className="min-h-screen p-8 max-w-3xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Your Knowledge</h1>
-        <div className="flex gap-3">
-          <button
-            onClick={() => navigate("/ask")}
-            className="bg-green-600 text-white px-4 py-2 rounded"
-          >
-            Ask Knowledge
-          </button>
-          <button onClick={handleLogout} className="text-sm text-gray-500">
-            Log out
-          </button>
-        </div>
-      </div>
 
-      <form onSubmit={handleSubmit} className="border rounded p-4 mb-8">
+    return (
+    <Layout>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Your Knowledge</h1>
+
+      <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-xl p-5 mb-8 shadow-sm">
         <div className="flex gap-2 mb-4">
           {["text", "url", "pdf"].map((m) => (
             <button
@@ -171,7 +155,7 @@ function Dashboard() {
           ))}
         </ul>
       )}
-    </div>
+     </Layout>
   );
 }
 

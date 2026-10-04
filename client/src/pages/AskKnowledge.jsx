@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
-
+import Layout from "../components/Layout";
 function AskKnowledge() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+ 
 
   const handleAsk = async (e) => {
     e.preventDefault();
@@ -28,17 +27,9 @@ function AskKnowledge() {
     }
   };
 
-  return (
-    <div className="min-h-screen p-8 max-w-3xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Ask Your Knowledge</h1>
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="text-sm text-blue-600"
-        >
-          ← Back to Library
-        </button>
-      </div>
+    return (
+    <Layout>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Ask Your Knowledge</h1>
 
       <form onSubmit={handleAsk} className="flex gap-2 mb-6">
         <input
@@ -82,7 +73,7 @@ function AskKnowledge() {
           </ul>
         </div>
       )}
-    </div>
+    </Layout>
   );
 }
 
