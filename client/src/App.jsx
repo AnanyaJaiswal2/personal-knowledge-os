@@ -3,7 +3,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import AskKnowledge from "./pages/AskKnowledge";
 function App() {
   return (
     <BrowserRouter>
@@ -19,6 +19,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/ask"
+  element={
+    <ProtectedRoute>
+      <AskKnowledge />
+    </ProtectedRoute>
+  }
+/>
       </Routes>
     </BrowserRouter>
   );
