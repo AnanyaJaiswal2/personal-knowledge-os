@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import api from "../api/axios";
 import Layout from "../components/Layout";
+import { FileText, Link as LinkIcon, Upload, ArrowRight } from "lucide-react";
 function Dashboard() {
   const [documents, setDocuments] = useState([]);
   const [mode, setMode] = useState("text"); // "text" | "url" | "pdf"
@@ -62,25 +64,39 @@ function Dashboard() {
   };
 
 
-
-    return (
+  return (
     <Layout>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Your Knowledge</h1>
-
-      <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-xl p-5 mb-8 shadow-sm">
+     <p className="text-sm text-gray-500 mb-1">
+  Good to see you, {localStorage.getItem("email")?.split("@")[0] || "there"} 👋
+</p>
+<h1 className="text-3xl font-extrabold text-white mb-1">
+  Your <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">Knowledge</span>
+</h1>
+<p className="text-gray-400 text-sm mb-6">Capture anything. Ask anything. Learn forever.</p>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-gray-900/60 border border-gray-800 rounded-2xl p-5 mb-8 shadow-xl"
+      >
         <div className="flex gap-2 mb-4">
-          {["text", "url", "pdf"].map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => setMode(m)}
-              className={`px-3 py-1 rounded text-sm ${
-                mode === m ? "bg-blue-600 text-white" : "bg-gray-100"
-              }`}
-            >
-              {m === "text" ? "Paste text" : m === "url" ? "Add URL" : "Upload PDF"}
-            </button>
-          ))}
+         {[
+  { key: "text", label: "Paste Text", icon: FileText },
+  { key: "url", label: "Add URL", icon: LinkIcon },
+  { key: "pdf", label: "Upload PDF", icon: Upload },
+].map(({ key, label, icon: Icon }) => (
+  <button
+    key={key}
+    type="button"
+    onClick={() => setMode(key)}
+    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+      mode === key
+        ? "bg-violet-600 text-white"
+        : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+    }`}
+  >
+    <Icon size={15} />
+    {label}
+  </button>
+))}
         </div>
 
         {mode === "text" && (
@@ -89,13 +105,13 @@ function Dashboard() {
               placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="border p-2 rounded"
+              className="bg-gray-950 border border-gray-800 text-white placeholder-gray-500 p-2.5 rounded-xl focus:ring-2 focus:ring-violet-500 focus:outline-none transition"
             />
             <textarea
               placeholder="Paste your note here..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="border p-2 rounded h-32"
+              className="bg-gray-950 border border-gray-800 text-white placeholder-gray-500 p-2.5 rounded-xl h-32 focus:ring-2 focus:ring-violet-500 focus:outline-none transition"
             />
           </div>
         )}
@@ -105,7 +121,7 @@ function Dashboard() {
             placeholder="https://example.com/article"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            className="border p-2 rounded w-full"
+            className="bg-gray-950 border border-gray-800 text-white placeholder-gray-500 p-2.5 rounded-xl w-full focus:ring-2 focus:ring-violet-500 focus:outline-none transition"
           />
         )}
 
@@ -114,48 +130,59 @@ function Dashboard() {
             type="file"
             accept="application/pdf"
             onChange={(e) => setFile(e.target.files[0])}
+            className="text-gray-400 text-sm"
           />
         )}
 
-        {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+        {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={uploading}
-          className="bg-blue-600 text-white px-4 py-2 rounded mt-4 disabled:opacity-50"
-        >
-          {uploading ? "Processing..." : "Add to knowledge base"}
-        </button>
+      <motion.button
+  whileTap={{ scale: 0.98 }}
+  type="submit"
+  disabled={uploading}
+  className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-semibold px-5 py-2.5 rounded-xl mt-4 transition shadow-[0_0_20px_rgba(139,92,246,0.3)] disabled:opacity-50"
+>
+  {uploading ? "Processing..." : "Add to knowledge base"}
+  {!uploading && <ArrowRight size={16} />}
+</motion.button>
       </form>
 
-      <h2 className="text-lg font-semibold mb-3">Your documents</h2>
+      <h2 className="text-lg font-semibold text-white mb-3">Your documents</h2>
       {documents.length === 0 ? (
         <p className="text-gray-500 text-sm">No documents yet.</p>
       ) : (
         <ul className="flex flex-col gap-2">
-          {documents.map((doc) => (
-            <li
-              key={doc._id}
-              className="border rounded p-3 flex justify-between items-center"
-            >
-              <div>
-                <p className="font-medium">{doc.title}</p>
-                <p className="text-xs text-gray-500">{doc.sourceType}</p>
-              </div>
-              <span
-                className={`text-xs px-2 py-1 rounded ${
-                  doc.status === "ready"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-yellow-100 text-yellow-700"
-                }`}
-              >
-                {doc.status}
-              </span>
-            </li>
+          {documents.map((doc, i) => (
+           <motion.li
+  key={doc._id}
+  initial={{ opacity: 0, y: 8 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: i * 0.05 }}
+  className="bg-gray-900/60 border border-gray-800 rounded-xl p-4 flex items-center gap-3 hover:border-gray-700 transition"
+>
+  <div className="w-9 h-9 rounded-lg bg-violet-600/15 text-violet-400 flex items-center justify-center flex-shrink-0">
+    {doc.sourceType === "pdf" && <FileText size={16} />}
+    {doc.sourceType === "url" && <LinkIcon size={16} />}
+    {doc.sourceType === "text" && <FileText size={16} />}
+  </div>
+  <div className="flex-1">
+    <p className="font-medium text-white">{doc.title}</p>
+    <p className="text-xs text-gray-500">{doc.sourceType}</p>
+  </div>
+  <span
+    className={`text-xs px-2 py-1 rounded-full ${
+      doc.status === "ready"
+        ? "bg-green-500/10 text-green-400"
+        : "bg-yellow-500/10 text-yellow-400"
+    }`}
+  >
+    {doc.status}
+  </span>
+</motion.li>
           ))}
         </ul>
       )}
-     </Layout>
+    </Layout>
   );
 }
 
